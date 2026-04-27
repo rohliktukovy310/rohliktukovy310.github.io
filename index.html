@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux a Správa Systému - Poznámky</title>
+    <style>
+        :root {
+            /* Profesionální paleta pro tmavý režim (Dark Mode) */
+            --bg-color: #0d1117;
+            --container-bg: #161b22;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --primary-color: #58a6ff;
+            --secondary-color: #3fb950;
+            --accent-color: #d2a8ff;
+            --border-color: #30363d;
+            --code-bg: #1f2428;
+            --code-inline-bg: rgba(110, 118, 129, 0.4);
+            --code-inline-color: #ff7b72;
+            --note-bg: rgba(63, 185, 80, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--text-color);
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            font-weight: 500;
+        }
+
+        h3 {
+            color: var(--accent-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        p {
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #e6edf3;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            background-color: var(--code-inline-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            color: var(--code-inline-color);
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: var(--text-color);
+            font-size: 0.95em;
+        }
+
+        .note {
+            background-color: var(--note-bg);
+            border-left: 4px solid var(--secondary-color);
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+            color: #e6edf3;
+        }
+
+        .citation {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            vertical-align: super;
+            margin-left: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            body {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Komplexní průvodce konfigurací a nástroji</h1>
+        </header>
+
+        <section id="obecne">
+            <h2>Obecné informace</h2>
+            <p>Při procházení adresáři vidíme účet, pod kterým jsme přihlášeni - např.: <code>uzivatel@localhost</code> následuje dvojtečka a za ní jeden ze dvou symbolů: <code>/</code> - root, <code>~</code> - domovský adresář - <code>/home/jmenousera</code>. Pokud při procházení nenacházíme některé soubory (například adresář <code>/etc/</code> se nachází hned za rootem), pravděpodobně musíme přepnout na druhou možnost pomocí <code>cd</code> a <code>/</code> nebo <code>~</code>.</p>
+        </section>
+
+        <section id="prikazy">
+            <h2>Příkazy pro každodenní použití (Everyday use)</h2>
+            <ul>
+                <li><code>man</code> - vypíše kompletní tutoriál příkazu s všemi jeho přepínači - např.: "man ls".</li>
+                <li><code>cd</code> - mění adresář.
+                    <ul>
+                        <li><code>cd ..</code> - vrátí vás o adresář "zpátky".</li>
+                    </ul>
+                </li>
+                <li><code>ls</code> - vypíše obsah aktuálního adresáře.
+                    <ul>
+                        <li><code>-l</code> - vypíše podrobnosti (práva, vlastníka, datum, velikost).</li>
+                        <li><code>-a</code> - zobrazí i skryté soubory (ty začínají tečkou).</li>
+                    </ul>
+                </li>
+                <li><code>pwd</code> - vypíše cestu k aktuálnímu adresáři.</li>
+                <li><code>mkdir</code> - vytvoří v aktuálním místě adresář.
+                    <ul>
+                        <li><code>-p</code> - v případě, že neexistují nad tím adresářem, který vytváříme.</li>
+                    </ul>
+                </li>
+                <li><code>cp</code> - kopíruje soubor či adresář.
+                    <ul>
+                        <li><code>-r</code> - rekurzivní kopírování.</li>
+                        <li><code>-i</code> - interaktivní režim, ptá se před přepsáním.</li>
+                    </ul>
+                </li>
+                <li><code>mv</code> - přesun nebo přejmenování souboru/adresáře.</li>
+                <li><code>rm</code> (remove) – Smazání souborů.
+                    <ul>
+                        <li><code>-r</code> - Smaže adresář i s jeho obsahem.</li>
+                        <li><code>-f</code> - Vynucené smazání (bez ptaní). Pozor: Nezvratná operace.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="instalace-gui">
+            <h2>Instalace GUI na Linux</h2>
+            <pre><code>sudo dnf install @kde-desktop
+startplasma-wayland
+sudo dnf install plasma-workspace-wayland</code></pre>
+            <p class="note">Tímto se instaluje prostředí KDE a Wayland kompozitor.</p>
+        </section>
+
+        <section id="firewall">
+            <h2>Práce s firewallem</h2>
+            <ul>
+                <li><code>sudo firewall-cmd --permanent --add-port=3389/tcp</code> – permanentní otevření portu.</li>
+                <li><code>sudo firewall-cmd --permanent --remove-port=3389/tcp</code> – permanentní zavření portu.</li>
+                <li><code>sudo firewall-cmd --list-all</code> - Výpis všech pravidel a nastavení pro výchozí zónu.</li>
+                <li><code>sudo firewall-cmd --list-ports</code> - Výpis povolených portů.</li>
+                <li><code>sudo firewall-cmd --list-services</code> - Výpis povolených služeb.</li>
+                <li><code>sudo firewall-cmd --reload</code> - restartuje firewall.</li>
+                <li><code>sudo firewall-cmd --state</code> - vypíše stav firewallu.</li>
+                <li><code>sudo systemctl status firewalld</code> - Zobrazení detailního stavu služby (přes systemd).</li>
+                <li><code>sudo systemctl start firewalld</code> / <code>sudo systemctl stop firewalld</code> - Spuštění / Zastavení firewallu.</li>
+                <li><code>sudo systemctl enable firewalld</code> - Povolení startu firewallu po startu systému.</li>
+            </ul>
+        </section>
+
+        <section id="sit">
+            <h2>Linux: Nastavení sítě</h2>
+            <ol>
+                <li><strong>Při instalaci</strong> – nejjednodušší.</li>
+                <li><strong>Přes nmtui</strong> – velmi nespolehlivé – navigace: Tab, Enter, šipky.
+                    <ul>
+                        <li><code>sudo dnf install NetworkManager-tui</code>.</li>
+                        <li><code>nmtui</code> – zapne nmtui.</li>
+                    </ul>
+                </li>
+                <li><strong>Příkazy v terminálu</strong> – Lepší než nmtui.
+                    <ul>
+                        <li><code>nmcli connection show</code> – vypíše síťový připojení.</li>
+                        <li><code>sudo nmcli connection modify "název" ipv4.method manual</code> – přepne z DHCP na manuální statickou adresu.</li>
+                        <li><code>sudo nmcli connection modify "název" ipv4.addresses 172.16.0.254/16</code> – nastavení adresy a masky sítě.</li>
+                        <li><code>sudo nmcli connection modify "název" ipv4.gateway 172.16.0.2</code> – nastavení výchozí brány.</li>
+                        <li><code>sudo nmcli connection modify "název" ipv4.dns 8.8.8.8</code> – nastavení DNS.</li>
+                        <li><code>sudo nmcli connection modify "ens160" ipv4.method manual</code> – nastaví, aby IPV4 byla pouze statická. Bez toho bude mít síťová karta DHCP adresu a tu kterou jsme přidali dohromady.</li>
+                        <li><code>sudo nmcli connection up "název"</code> – restartuje síťovou kartu, aby se nastavení projevilo.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Ověření funkčnosti portů</h3>
+            <p>Pokud "pingujeme" z Windowsu, možností je více, použijeme telnet. Stiskněte Win+R a do nabídky napište <code>optionalfeatures</code>. Tady zaškrtnout telnet políčko a "OK". Pak přes cmd, které je nutné po instalaci restartovat, zadáme příkaz: <code>telnet ipadresa port</code>.</p>
+        </section>
+
+        <section id="lvm">
+            <h2>Nastavení LVM</h2>
+            <ul>
+                <li><code>sudo pvcreate /dev/sdb /dev/sdc</code> – Physical Volume. Označíme jednotlivé disky pro práci s LVM.</li>
+                <li><code>sudo vgcreate datavg /dev/sdb /dev/sdc</code> – Volume Group. Spojíme disky do jednoho celku jménem datavg.</li>
+                <li><code>sudo lvcreate -l 100%FREE -n datalv datavg</code> – Z Volume Group datavg vytvoříme svazek datalv s 100% volného místa.</li>
+                <li><code>sudo mkfs.xfs /dev/datavg/datalv</code> – Vytvoříme filesystem xfs.</li>
+                <li><code>sudo mkdir -p /mnt/data</code> – vytvoření prázdné složky – přípojného bodu.</li>
+                <li><code>sudo mount /dev/datavg/datalv /mnt/data</code> – Svazek připojíme do naší prázdné složky.</li>
+                <li><code>sudo nano /etc/fstab</code> – Aby se připojení uchovalo, musíme to zapsat do fstabu. Vložíme do fstabu: <code>/dev/datavg/datalv /mnt/data xfs defaults 0 0</code> – „Při každém startu vezmi tento svazek, připoj ho do této složky, použij formát xfs a výchozí nastavení.“.</li>
+            </ul>
+        </section>
+
+        <section id="samba">
+            <h2>Samba</h2>
+            <ul>
+                <li>Nainstalujte Sambu: <code>sudo apt install samba</code>.</li>
+                <li>Vytvořte složku na vašem LVM disku: <code>mkdir /mnt/data/share</code>.</li>
+                <li>Upravte soubor <code>/etc/samba/smb.conf</code> a na konec přidejte definici sdílení (cesta ke složce, práva atd.).</li>
+                <li>Nastavte uživateli heslo pro Sambu: <code>sudo smbpasswd -a uzivatel</code>.</li>
+            </ul>
+        </section>
+
+        <section id="apache">
+            <h2>Apache Server</h2>
+            <ul>
+                <li><code>sudo dnf install httpd</code> - nainstalujeme službu.</li>
+                <li><code>sudo systemctl start httpd</code> - zapneme službu.</li>
+                <li><code>sudo systemctl enable httpd</code> - nastavíme její automatické zapnutí při startu systému.</li>
+            </ul>
+
+            <h3>Vytvoření obsahu pro více webů na různých portech</h3>
+            <pre><code>sudo mkdir -p /var/www/web1010/html
+sudo mkdir -p /var/www/web2020/html</code></pre>
+            <p>Těmito příkazy vytvoříme jednotlivé složky pro dva weby na různých portech. Poté musíme do těchto adresářů uložit nějaký obsah na jejich odlišení.</p>
+            
+            <pre><code>echo "&lt;h1&gt;Web na portu 1010&lt;/h1&gt;" | sudo tee /var/www/web1010/html/index.html
+echo "&lt;h1&gt;Web na portu 2020&lt;/h1&gt;" | sudo tee /var/www/web2020/html/index.html</code></pre>
+            <p>Takto v nich vytvoříme soubor index.html a vložíme jednoduchý text, který je rozliší.</p>
+
+            <pre><code>sudo chown -R apache:apache /var/www/web1010
+sudo chown -R apache:apache /var/www/web2020</code></pre>
+            <p>Nyní musíme nastavit jakožto vlastníka uživatele apache, jelikož když použijeme "sudo" vlastníkem je root a nikdo jiný tam přístup nemá.</p>
+
+            <h3>Konfigurace Apache</h3>
+            <p><code>sudo nano /etc/httpd/conf/httpd.conf</code> - Toto je hlavní konfigurační soubor pro všechny weby. V něm musíme nastavit porty, na kterých má Apache naslouchat: <code>Listen 1010</code>, <code>Listen 2020</code>.</p>
+            <p><code>/etc/httpd/conf.d</code> - Toto je složka, kde se konfigurují jednotlivé weby na jednotlivých portech. Vytvoříme zde dva soubory: <code>sudo nano /etc/httpd/conf.d/web1010.conf</code> a <code>sudo nano /etc/httpd/conf.d/web2020.conf</code>.</p>
+            
+            <pre><code>&lt;VirtualHost *:1010&gt; 
+    ServerName web1010.cz
+    ServerAlias www.web1010.cz
+    DocumentRoot /var/www/web1010/html
+
+    &lt;Directory "/var/www/web1010/html"&gt;
+        AllowOverride all
+        Require all granted
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre>
+            <p>Toto do nich vložíme. Samozřejmě změníme "web1010" v adresářích v druhé složce na "web2020". NEZAPOMENOUT ZMĚNIT PORT V PRVNÍM ŘÁDKU!.</p>
+
+            <h3>SELinux a Firewall pro Apache</h3>
+            <ul>
+                <li>Nyní musíme SELinuxu říct, že má pracovat i s našimi porty. Potřebujeme k tomu nástroj: <code>sudo dnf install policycoreutils-python-utils</code>.
+                    <br><code>sudo semanage port -a -t http_port_t -p tcp 1010</code>
+                    <br><code>sudo semanage port -a -t http_port_t -p tcp 2020</code>.
+                </li>
+                <li>Nyní musíme porty otevřít ve firewallu:
+                    <br><code>sudo firewall-cmd --permanent --add-port=1010/tcp</code>
+                    <br><code>sudo firewall-cmd --permanent --add-port=2020/tcp</code>.
+                </li>
+                <li><code>sudo firewall-cmd --reload</code> - FIREWALL RESTARTUJEME.</li>
+                <li><code>sudo systemctl restart httpd</code> - NAKONEC SLUŽBU RESTARTUJEME. BEZ TOHO SE TO NENAČTE.</li>
+            </ul>
+
+            <h3>Ověření funkčnosti</h3>
+            <ul>
+                <li><code>sudo apachectl configtest</code> - Ověří správnost syntaxe v konfiguračních souborech.</li>
+                <li><code>sudo httpd -S</code> - Ukáže co za porty apache poslouchá a které soubory .conf načítá.</li>
+                <li><code>sudo semanage port -l | grep http_port_t</code> - Zobrazí porty povolené v SELinuxu.</li>
+            </ul>
+        </section>
+
+        <section id="nginx">
+            <h2>Nastavení Nginx Serveru</h2>
+            <p>Pokud Nginx nemáme, nainstalujeme si ho: <code>sudo dnf install nginx</code>.</p>
+            <p>Toto je konkrétní nastavení pro dva různé weby běžící na portech 8080 a 8081. Nejdříve si vytvoříme samotné index.html soubory, které budou weby číst. Musíme je vytvořit mimo /home adresář, jinak SELinux k nim zakáže přístup.</p>
+            
+            <pre><code>sudo mkdir -p /var/www/web1 /var/www/web2</code></pre>
+            <p>Tímto vytvoříme složky "web1" a "web2", do kterých dáme soubor index.html, který bude web zobrazovat. Standardně se používá cesta <code>/var/www/</code>. Teoreticky by soubory mohly být umístěny například i v rootu, ale je to bezpečnostní rizko, jelikož bychom nginxu nastavili přístup do celého systému. Zároveň by nás tam SELinux nechtěl pustit.</p>
+
+            <pre><code>echo "&lt;h1&gt;Web 1 běží na 8080&lt;/h1&gt;" | sudo tee /var/www/web1/index.html
+echo "&lt;h1&gt;Web 2 běží na 8081&lt;/h1&gt;" | sudo tee /var/www/web2/index.html</code></pre>
+            <p>Tyto dva příkazy do našich adresářů nahrají text odlišující dva weby. Lze to samozřejmě udělat i ručně.</p>
+
+            <h3>Konfigurace Nginx</h3>
+            <p>Nyní musíme nakonfigurovat Nginx a říct mu, kde si má soubory vzít: <code>/etc/nginx/conf.d/</code> - v této složce si vytvoříme dva soubory pro dva weby, které budou určovat jejich nastavení (Např.: web1.conf a web2.conf). Nyní do těchto dvou souborů vložíme konfiguraci (samozřejmě nezapomeneme změnit porty a soubory pro jednotlivé weby):</p>
+            <pre><code>server {
+    listen 8080;
+    root /var/www/web1;
+    index index.html;
+}</code></pre>
+            <p>Po uložení si můžeme nastavení zkontrolovat pomocí <code>sudo nginx -t</code>. Pokud zde budeme mít nějaké syntatické chyby, upozorní nás to.</p>
+
+            <h3>Porty, Firewall a SELinux</h3>
+            <p>Teď si otevřeme porty, na kterých chceme weby provozovat (jestli to už nemáme).</p>
+            <ul>
+                <li><code>sudo firewall-cmd --permanent --add-port=8080/tcp</code></li>
+                <li><code>sudo firewall-cmd --permanent --add-port=8081/tcp</code></li>
+                <li><code>sudo firewall-cmd --list-all</code> - Pro kontrolu</li>
+                <li><code>sudo firewall-cmd --reload</code></li>
+            </ul>
+
+            <p>Nastavíme porty také pro SELinux:</p>
+            <ul>
+                <li><code>sudo semanage port -a -t http_port_t -p tcp 8080</code></li>
+                <li><code>sudo semanage port -a -t http_port_t -p tcp 8081</code></li>
+            </ul>
+
+            <p>Protože SELinux je přísný, musíme mu říct, že ty soubory jsou určený pro nginx web. Těmito příkazy to uděláme trvale:</p>
+            <pre><code># Trvalé zapsání do databáze SELinuxu
+sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/web1(/.*)?"
+sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/web2(/.*)?"
+
+# Aplikace štítků na existující soubory
+sudo restorecon -Rv /var/www/</code></pre>
+
+            <p>Jako poslední musíme Nginxu nastavit práva pro práci se soubory, co má zobrazit:</p>
+            <pre><code>sudo chmod -R 755 /var/www/web1
+sudo chmod -R 755 /var/www/web2</code></pre>
+            <p>Konkrétně mu nastavíme read a execute. Execute proto, aby se prokousal přes adresáře až k souboru a read, aby si ho přečetl a zobrazil. Nakonec službu restartujeme: <code>sudo systemctl restart nginx</code>. Abychom mohli měnit bezpečnostní kontexty pro SELinux, nainstalujeme si k tomu nejdřív nástroj: <code>sudo dnf install policycoreutils-python-utils</code>.</p>
+        </section>
+
+        <section id="vzdaleny-pristup">
+            <h2>Vzdálený přístup</h2>
+            <p><strong>Servery a klienti:</strong> Server - Aplikace, do které se připojujeme (Ovládaný PC). Klient - Aplikace, přes kterou se připojujeme (Ovládající PC).</p>
+            
+            <h3>Remmina</h3>
+            <p>Linux klient pro RDP, SSH, VNC. Funguje jako jedna aplikace, do které se doinstalovávají moduly pro jednotlivé protokoly.</p>
+            <ul>
+                <li><code>sudo dnf install remmina</code>.</li>
+                <li><code>sudo dnf install remmina remmina-plugins-vnc</code> – nainstaluje remminu i s modulem VNC.</li>
+            </ul>
+
+            <h3>SSH + SSH klíče</h3>
+            <ol>
+                <li>Na Windows 11 otevřete Příkazový řádek a napište <code>ssh-keygen</code>. Vygeneruje se veřejný a soukromý klíč. Když se bude terminál ptát na heslo pro autentizaci SSH klíče, tak musíme zmáčknout pouze enter – nechat ho prázdné (pokud chceme ověřování bez hesla). Kdybychom heslo nastavili, tak by se při každé autentifikaci certifikátem terminál ptal i na heslo.</li>
+                <li>Veřejný klíč nyní musíme umístit do souboru <code>authorized_keys</code>. Tento soubor musí být v adresáři <code>~/.ssh/</code>. <code>~/</code> - zástupný znak pro domovskou složku, <code>.ssh</code> – tečka před složkou znamená že složka je skrytá. Vytvoření: <code>mkdir -p ~/.ssh</code>, <code>nano ~/.ssh/authorized_keys</code>.</li>
+                <li>Na Linuxu v souboru <code>/etc/ssh/sshd_config</code> změňte PasswordAuthentication z „yes“ na „no“ a restartujte službu SSH. Nyní se přihlásíte pouze s klíčem.</li>
+            </ol>
+            <p class="note">SSH přihlášení: <code>ssh jmenousera@ipadresa</code> – např: <code>ssh uzivatel@172.16.0.199</code>. Nejdříve se musíme přihlašovat pomocí hesla usera, za kterého se přihlašujeme. Po nastavení ssh certifikátu už ne.</p>
+
+            <h3>RDP (Remote Desktop Protocol)</h3>
+            <ul>
+                <li><strong>Windows RDP klient:</strong> Je nativně nainstalovaný a zapnutý.</li>
+                <li><strong>Windows RDP Server:</strong> Je nativně nainstalovaný, ale je nutné ho zapnout. Ve Windows 11 jděte do Nastavení > Systém > Vzdálená plocha (Remote Desktop). Přepněte přepínač Vzdálená plocha na Zapnuto a potvrďte.</li>
+                <li><strong>Linux RDP Server:</strong> <code>sudo dnf install xrdp</code>.</li>
+                <li><strong>Linux RDP Klient:</strong> Řešíme přes Remminu: <code>sudo dnf install remmina remmina-plugins-rdp</code>.</li>
+            </ul>
+            
+            <h4>Připojení z Windows na Linux</h4>
+            <p>Ve windowsu nativně – není nutno instalovat. Na linuxu musíme nainstalovat. Například xrdp: <code>sudo dnf install xrdp</code>, <code>sudo systemctl enable --now xrdp</code>. Dále: <code>sudo firewall-cmd --permanent --add-port=3389/tcp</code>, <code>sudo firewall-cmd --reload</code>. Pokud to nefunguje, doinstalujte: <code>sudo dnf install plasma-workspace-x11 xorg-x11-xinit</code>.</p>
+
+            <h4>Připojení z Linuxu na Windows</h4>
+            <p>Zapněte vzdálenou plochu ve Windows 11. Na Linuxu nainstalujte <code>sudo dnf install remmina remmina-plugins-rdp</code>, spusťte Remminu. Vyberte RDP, zadejte IP adresu Windows, uživatelské jméno a heslo do Windows. Chybějící certifikát stačí "Přijmout".</p>
+
+            <h3>VNC</h3>
+            <ul>
+                <li><strong>Linux VNC klient:</strong> Řešíme přes Remminu: <code>sudo dnf install remmina remmina-plugins-vnc</code>.</li>
+                <li><strong>Linux VNC server:</strong> TigerVNC: <code>sudo dnf install tigervnc-server</code>.</li>
+                <li><strong>Windows VNC server:</strong> TightVNC.</li>
+                <li><strong>Windows VNC klient:</strong> RealVNC Viewer.</li>
+            </ul>
+
+            <h4>Připojení z Linuxu na Windows</h4>
+            <p>Nainstalujte Remminu s VNC modulem a otevřete port 5900 (<code>sudo firewall-cmd --permanent --add-port=5900/tcp</code>, reload). Na Windows stáhněte TightVNC, nainstalujte Server a nastavte heslo. Jděte do Remminy, vyberte VNC, zadejte IP a heslo.</p>
+
+            <h4>Připojení z Windowsu na Linux</h4>
+            <p><code>sudo dnf install tigervnc-server</code>, vytvořte heslo pomocí <code>vncpasswd</code>. Musíme systému říct, že "Displej číslo 1" patří vašemu uživateli. Otevřete konfigurační soubor <code>sudo nano /etc/tigervnc/vncserver.users</code> a na konec přidejte <code>:1=uzivatel</code> (bez hashtagu). Otevřete port 5901 (<code>sudo firewall-cmd --permanent --add-port=5901/tcp</code>, reload).</p>
+        </section>
+
+        <section id="ftp-scp">
+            <h2>SCP, SFTP a FTP</h2>
+            
+            <h3>SCP a SFTP</h3>
+            <p>Protokoly pro kopírování souborů pracující přes SSH. WinSCP - Windows klient pro SCP i SFTP (stačí stáhnout a nainstalovat). Zadává se Hostitel, Uživatelské jméno, Heslo. U SCP i SFTP číslo portu 22 (SSH).</p>
+            <p><strong>OpenSSH Server:</strong> V Linuxu většinou předinstalovaný (Fedora). Ve Windowsu nutno nainstalovat (Aplikace -> Volitelné součásti -> Zobrazit funkce -> Server OpenSSH) a nastavit typ spouštění na "automaticky" v "services.msc". V Linuxu instalace: <code>sudo dnf install openssh-server</code>.</p>
+
+            <h3>FTP</h3>
+            <h4>FTP Windows Server</h4>
+            <p>Stáhnout Filezilla server a nainstalovat. Nutno povolit ve firewallu soubor <code>filezilla-server.exe</code>. V konzoli "Administer FileZilla Server" vytvořit nového uživatele. Připojíme se přes heslo z instalace. Pokud je zde již "&lt;system user&gt;", můžeme se přihlásit přes uživatele ve Windowsu. V <code>Server -> Configure -> Users -> Add (User)</code> vytvoříme nového. <strong>virtual path</strong> je to, co uvidíme po připojení (Pro Linux se dává <code>/</code>). <strong>native path</strong> je skutečná cesta. Nezapomenout nastavit práva.</p>
+
+            <h4>FTP Klienti</h4>
+            <ul>
+                <li><strong>Windows klient:</strong> Filezilla (má GUI, podporuje i SFTP). Lze se připojit i přes průzkumníka souborů zadáním <code>ftp:\\adresastroje</code> do adresního řádku nebo v záložce síť "nové místo pro připojení". Nutné znát username a heslo.</li>
+                <li><strong>Linux klient:</strong> <code>sudo dnf install filezilla</code>. Ovládá se v GUI.</li>
+            </ul>
+
+            <h4>FTP Linux Server</h4>
+            <p>vsftpd - very secure FTP Daemon.</p>
+            <pre><code>sudo dnf install vsftpd
+sudo systemctl enable --now vsftpd</code></pre>
+            <p>Povolíme a zapneme vždy při startu. Konfigurace je uložena v <code>/etc/vsftpd/vsftpd.conf</code>. Musí být odkomentováno/přidáno:</p>
+            <ul>
+                <li><code>anonymous_enable=NO</code></li>
+                <li><code>local_enable=YES</code></li>
+                <li><code>write_enable=YES</code></li>
+                <li><code>chroot_local_user=YES</code></li>
+                <li>Na konec: <code>allow_writeable_chroot=YES</code></li>
+            </ul>
+            <p>Poté: <code>sudo systemctl restart vsftpd</code>, pro SELinux <code>sudo setsebool -P ftpd_full_access 1</code> a přidat do firewallu <code>sudo firewall-cmd --add-service=ftp --permanent</code>, reload. Nyní se lze připojit například z Windows přes Filezillu.</p>
+        </section>
+
+    </div>
+</body>
+</html>
